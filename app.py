@@ -21,4 +21,7 @@ except mariadb.Error as e:
     print(f"Error connecting to mariadb platform: {e}")
     sys.exit(1)  
 
+else:
+    print ("it works!")
+
 cur = conn.cursor()
