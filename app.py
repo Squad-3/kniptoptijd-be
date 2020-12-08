@@ -16,10 +16,11 @@ conn = mariadb.connect(
     port=3307,
     database="kniptoptijd")
 cur = conn.cursor()
+t = ('Utrecht',)
 
 @app.route('/')
 def get():
-    cur.execute('''select * from Kappers''')
+    cur.execute('''select * from Kappers where stad=?''', t)
     r = [dict((cur.description[i][0], value)
                 for i, value in enumerate(row)) for row in cur.fetchall()]
     return jsonify({'kapperscollectie' : r})
