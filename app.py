@@ -16,14 +16,6 @@ conn = mariadb.connect(
     port=3307,
     database="kniptoptijd")
 cur = conn.cursor()
-t = ('Utrecht',)
-
-@app.route('/get')
-def get():
-    cur.execute('''select * from Kappers where stad=?''', t)
-    r = [dict((cur.description[i][0], value)
-                for i, value in enumerate(row)) for row in cur.fetchall()]
-    return jsonify({'kapperscollectie' : r})
 
 @app.route('/', methods=['POST'])
 def get_kappers():
