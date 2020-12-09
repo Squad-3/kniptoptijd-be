@@ -4,22 +4,24 @@ import mariadb
 import sys
 import json
 from settings import db_password, db_user, db_host
-from bson import json_util, ObjectId
+
 
 app = Flask(__name__)
 api = Api(app) 
 
 conn = mariadb.connect(
-    user=db_user,
-    password=db_password,
-    host=db_host,
+    user='squad3',
+    password='Broodjekoek!12',
+    host= '83.85.148.135',
     port=3307,
     database="kniptoptijd")
 cur = conn.cursor()
 
+t=('Utrecht',)
+
 @app.route('/')
 def get():
-    cur.execute('''select * from Kappers''')
+    cur.execute('''select * from Kappers where stad=?''', t)
     r = [dict((cur.description[i][0], value)
                 for i, value in enumerate(row)) for row in cur.fetchall()]
     return jsonify({'kapperscollectie' : r})
