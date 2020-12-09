@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from flask_restful import Api, Resource, reqparse
 import mariadb
 import sys
@@ -18,12 +18,27 @@ conn = mariadb.connect(
 cur = conn.cursor()
 t = ('Utrecht',)
 
-@app.route('/')
+@app.route('/get')
 def get():
     cur.execute('''select * from Kappers where stad=?''', t)
     r = [dict((cur.description[i][0], value)
                 for i, value in enumerate(row)) for row in cur.fetchall()]
     return jsonify({'kapperscollectie' : r})
+
+@app.route('/', methods=['POST'])
+def get_kappers():
+    return post(cur)
+
+def post(cur):
+    parser = reqparse.RequestParser()
+    parser.add_argument("stad", required=True, help='Project title is required')
+    args = parser.parse_args()
+    print(args['stad'])
+    cur.execute("select * from Kappers where stad=?", (args['stad'],))
+    r = [dict((cur.description[i][0], value)
+                for i, value in enumerate(row)) for row in cur.fetchall()]
+    return jsonify({'kapperscollectie' : r})
+
 
 #if __name__ == '__main__':
 app.run()
