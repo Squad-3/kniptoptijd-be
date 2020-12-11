@@ -29,9 +29,9 @@ def post(cur):
     print(args['stad'])
     print(args['straatnaam'])
     cur.execute("select * from Kappers where stad=? OR straatnaam LIKE ?", (args['stad'],'%' + args['straatnaam'] + '%',))
-    r = [dict((cur.description[i][0], value)
+    kapperscollectie = [dict((cur.description[i][0], value)
                 for i, value in enumerate(row)) for row in cur.fetchall()]
-    return jsonify({'kapperscollectie' : r})
+    return jsonify(kapperscollectie)
 
 
 
