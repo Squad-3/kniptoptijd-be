@@ -23,12 +23,10 @@ def get_kappers():
 
 def post(cur):
     parser = reqparse.RequestParser()
-    parser.add_argument("stad")
-    parser.add_argument("straatnaam")
+    parser.add_argument("locatie")
     args = parser.parse_args()
-    print(args['stad'])
-    print(args['straatnaam'])
-    cur.execute("select * from Kappers where stad=? OR straatnaam LIKE ?", (args['stad'],'%' + args['straatnaam'] + '%',))
+    #cur.execute("select * from Kappers where stad=? OR straatnaam=?", ('%' + args['locatie'] + '%','%' + args['locatie'] + '%'))
+    cur.execute("select * from Kappers where ? IN (stad,straatnaam)", (args['locatie'],))
     kapperscollectie = [dict((cur.description[i][0], value)
                 for i, value in enumerate(row)) for row in cur.fetchall()]
     return jsonify(kapperscollectie)
