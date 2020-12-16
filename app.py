@@ -26,7 +26,7 @@ def post_locatie(cur):
     parser.add_argument("locatie")
     args = parser.parse_args()
     #cur.execute("select * from Kappers where stad=? OR straatnaam=?", ('%' + args['locatie'] + '%','%' + args['locatie'] + '%'))
-    cur.execute("select * from Kappers where ? IN (stad,straatnaam)", (args['locatie'],))
+    cur.execute("select * from Kapsalons where ? IN (stad,straatnaam)", (args['locatie'],))
     kapperscollectie = [dict((cur.description[i][0], value)
                 for i, value in enumerate(row)) for row in cur.fetchall()]
     return jsonify(kapperscollectie)
@@ -38,10 +38,9 @@ def get_behandeling():
 
 def post_behandeling(cur):
     parser = reqparse.RequestParser()
-    parser.add_argument("idkapper")
+    parser.add_argument("idkapsalon")
     args = parser.parse_args()
-    print(args['idkapper'])
-    cur.execute("select * from Behandelingen where kapsalonID=?", (args['idkapper'],))
+    cur.execute("select * from Behandelingen where kapsalonID=?", (args['idkapsalon'],))
     behandelingcollectie = [dict((cur.description[i][0], value)
                 for i, value in enumerate(row)) for row in cur.fetchall()]
     return jsonify(behandelingcollectie)
