@@ -18,7 +18,7 @@ conn = mariadb.connect(
 cur = conn.cursor()
 
 @app.route('/locatie', methods=['POST'])
-def get_kappers():
+def get_locatie():
     return post_locatie(cur)
 
 def post_locatie(cur):
@@ -44,6 +44,19 @@ def post_behandeling(cur):
     behandelingcollectie = [dict((cur.description[i][0], value)
                 for i, value in enumerate(row)) for row in cur.fetchall()]
     return jsonify(behandelingcollectie)
+
+@app.route('/kapper', methods=['POST'])
+def get_kappers():
+    return post_kappers(cur)
+
+def post_kappers(cur):
+    parser = reqparse.RequestParser()
+    parser.add_argument("idkapsalon")
+    args = parser.parse_args()
+    cur.execute("select * from Kappers where kapsalonID=?", (args['idkapsalon'],))
+    behandelingcollectie = [dict((cur.description[i][0], value)
+                for i, value in enumerate(row)) for row in cur.fetchall()]
+    return jsonify(behandelingcollectie)    
 #if __name__ == '__main__':
 app.run()
      
