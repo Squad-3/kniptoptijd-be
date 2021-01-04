@@ -40,7 +40,8 @@ def post_behandeling(cur):
     parser = reqparse.RequestParser()
     parser.add_argument("idkapsalon")
     args = parser.parse_args()
-    cur.execute("select * from Behandelingen where kapsalonID=?", (args['idkapsalon'],))
+    #cur.execute("select * from Behandelingen where kapsalonID=?", (args['idkapsalon'],))
+    cur.execute("select B.behandelingID, B.naam, B.prijs, B.tijd from Behandelingen B INNER JOIN Kapsalons K ON B.kapsalonID = K.kapsalonID where K.kapsalonID=?", (args['idkapsalon'],))
     behandelingcollectie = [dict((cur.description[i][0], value)
                 for i, value in enumerate(row)) for row in cur.fetchall()]
     return jsonify(behandelingcollectie)
