@@ -41,7 +41,10 @@ def post_behandeling(cur):
     parser.add_argument("idkapsalon")
     args = parser.parse_args()
     #cur.execute("select * from Behandelingen where kapsalonID=?", (args['idkapsalon'],))
-    cur.execute("select B.behandelingID, B.naam, B.prijs, B.tijd from Behandelingen B INNER JOIN Kapsalons K ON B.kapsalonID = K.kapsalonID where K.kapsalonID=?", (args['idkapsalon'],))
+    cur.execute("""SELECT DISTINCT B.behandelingID, B.naam, B.prijs, B.tijd 
+                FROM Behandelingen B INNER JOIN KappersBehandelingen K 
+                ON B.behandelingID = K.behandelingID WHERE K.kapsalonID=?""", 
+                (args['idkapsalon'],))
     behandelingcollectie = [dict((cur.description[i][0], value)
                 for i, value in enumerate(row)) for row in cur.fetchall()]
     return jsonify(behandelingcollectie)
@@ -53,8 +56,17 @@ def get_kappers():
 def post_kappers(cur):
     parser = reqparse.RequestParser()
     parser.add_argument("idkapsalon")
+    parser.add_argument("idbehandeling")
     args = parser.parse_args()
-    cur.execute("select * from Kappers where kapsalonID=?", (args['idkapsalon'],))
+    #cur.execute("select * from Kappers where kapsalonID=?", (args['idkapsalon'],))
+    #cur.execute("select KA.kapperID, KA.kapsalonID, KA.behandelingID, KA.voornaam, KA.werkdagen from Kappers KA INNER JOIN Kapsalons K ON KA.kapsalonID = K.kapsalonID INNER JOIN Behandelingen B ON KA.behandelingID = B.behandelingID where K.kapsalonID=? ORDER BY kapperID", (args['idkapsalon'],))
+    cur.execute("""SELECT DISTINCT KA.kapperID, KA.voornaam, KA.werkdagen
+                FROM Kappers KA INNER JOIN KappersBehandelingen K
+                ON KA.kapperID = K.kapperID
+                INNER JOIN KappersKapsalons KS
+                ON KA.kapperID = KS.kapperID 
+                WHERE KS.kapsalonID=? AND K.behandelingID=?""", 
+                (args['idkapsalon'], args['idbehandeling'],))
     behandelingcollectie = [dict((cur.description[i][0], value)
                 for i, value in enumerate(row)) for row in cur.fetchall()]
     return jsonify(behandelingcollectie)    
