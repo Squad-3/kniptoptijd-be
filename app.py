@@ -29,49 +29,12 @@ def post_locatie(cur):
     kapperscollectie = [dict((cur.description[i][0], value)
                 for i, value in enumerate(row)) for row in cur.fetchall()]
     return jsonify(kapperscollectie)
-
-
+    
 @app.route('/behandeling', methods=['POST'])
 def get_behandeling():
     return post_behandeling(cur)
 
 def post_behandeling(cur):
-    parser = reqparse.RequestParser()
-    parser.add_argument("idkapsalon")
-    args = parser.parse_args()
-    cur.execute("""SELECT DISTINCT B.behandelingID, B.naam, B.prijs, B.tijd 
-                FROM Behandelingen B INNER JOIN KappersBehandelingen K 
-                ON B.behandelingID = K.behandelingID WHERE K.kapsalonID=?""", 
-                (args['idkapsalon'],))
-    behandelingcollectie = [dict((cur.description[i][0], value)
-                for i, value in enumerate(row)) for row in cur.fetchall()]
-    return jsonify(behandelingcollectie)
-
-@app.route('/kapper', methods=['POST'])
-def get_kappers():
-    return post_kappers(cur)
-
-def post_kappers(cur):
-    parser = reqparse.RequestParser()
-    parser.add_argument("idkapsalon")
-    parser.add_argument("idbehandeling")
-    args = parser.parse_args()
-    cur.execute("""SELECT DISTINCT KA.kapperID, KA.voornaam, KA.werkdagen
-                FROM Kappers KA INNER JOIN KappersBehandelingen K
-                ON KA.kapperID = K.kapperID
-                INNER JOIN KappersKapsalons KS
-                ON KA.kapperID = KS.kapperID
-                WHERE KS.kapsalonID=? AND K.behandelingID=?""", 
-                (args['idkapsalon'], args['idbehandeling'],))
-    behandelingcollectie = [dict((cur.description[i][0], value)
-                for i, value in enumerate(row)) for row in cur.fetchall()]
-    return jsonify(behandelingcollectie)
-
-@app.route('/afspraak', methods=['POST'])
-def get_afspraak():
-    return post_afspraak(cur)
-
-def post_afspraak(cur):
     parser = reqparse.RequestParser()
     parser.add_argument("kapsalonid")
     parser.add_argument("behandelingid")
@@ -88,6 +51,33 @@ def post_afspraak(cur):
     behandelingcollectie = [dict((cur.description[i][0], value)
                 for i, value in enumerate(row)) for row in cur.fetchall()]
     return jsonify(behandelingcollectie)
+
+@app.route('/afspraak', methods=['POST'])
+def post_afspraak():
+    parser = reqparse.RequestParser()
+    parser.add_argument("kapsalonid")
+    parser.add_argument("kapperid")
+    parser.add_argument("behandelingid")
+    parser.add_argument("datum")
+    args = parser.parse_args()
+    cur.execute("""INSERT INTO Afspraken (kapsalon, kapper, behandeling, datum)
+                VALUES (?, ?, ?, ?)
+                """, 
+                (args['kapsalonid'],args['kapperid'],args['behandelingid'],args['datum']))
+    conn.commit()
+    return "Afspraak aangemaakt"
+ 
+@app.route('/afspraakvewijderen', methods=['DELETE'])
+def delete_afspraakvewijderen():
+    parser = reqparse.RequestParser()
+    parser.add_argument("afspraakid")
+    args = parser.parse_args()
+    cur.execute("""DELETE FROM Afspraken
+                WHERE afspraakID = ?
+                """, 
+                (args['afspraakid'],))
+    conn.commit()
+    return "Afspraak verwijderd"
 #if __name__ == '__main__':
 app.run()
      
