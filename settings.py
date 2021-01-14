@@ -14,4 +14,4 @@ load_dotenv(dotenv_path=env_path)
 import os
 db_user = os.getenv('DB_USER')
 db_password = os.getenv('DB_PASSWORD') 
-db_host = os.getenv('DB_HOSTT')
+db_host = os.getenv('DB_HOST')
