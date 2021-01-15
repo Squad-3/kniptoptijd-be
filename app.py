@@ -79,5 +79,5 @@ def delete_afspraakvewijderen():
     conn.commit()
     return "Afspraak verwijderd"
 #if __name__ == '__main__':
-app.run()
+app.run(ssl_context='adhoc')
      
