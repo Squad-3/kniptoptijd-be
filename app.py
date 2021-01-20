@@ -58,12 +58,16 @@ def post_afspraak():
     parser.add_argument("kapsalonid")
     parser.add_argument("kapperid")
     parser.add_argument("behandelingid")
-    parser.add_argument("datum")
+    parser.add_argument("dag")
+    parser.add_argument("tijd")
+    parser.add_argument("klant")
+    parser.add_argument("klantemail")
+    parser.add_argument("klanttelefoon")
     args = parser.parse_args()
-    cur.execute("""INSERT INTO Afspraken (kapsalon, kapper, behandeling, datum)
-                VALUES (?, ?, ?, ?)
+    cur.execute("""INSERT INTO Afspraken (kapsalon, kapper, behandeling, dag, tijd, klant, klantemail, klanttelefoon)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
                 """, 
-                (args['kapsalonid'],args['kapperid'],args['behandelingid'],args['datum']))
+                (args['kapsalonid'],args['kapperid'],args['behandelingid'],args['dag'],args['tijd'],args['klant'],args['klantemail'],args['klanttelefoon']))
     conn.commit()
     return "Afspraak aangemaakt"
  
@@ -79,5 +83,5 @@ def delete_afspraakvewijderen():
     conn.commit()
     return "Afspraak verwijderd"
 #if __name__ == '__main__':
-app.run(ssl_context='adhoc')
+app.run()
      
