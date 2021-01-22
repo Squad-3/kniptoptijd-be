@@ -17,9 +17,9 @@ def post_mail():
    recipients = request.args.get('klantemail')
    dag = request.args.get('dag')
    tijd = request.args.get('tijd')
-   kapsalon = request.args.get('kapsalonid')
-   behandeling = request.args.get('behandelingid')
-   kapper = request.args.get('kapperid')
+   kapsalon = request.args.get('kapsalon')
+   behandeling = request.args.get('behandeling')
+   kapper = request.args.get('kapper')
    msg = Message('Kappersafspraak', sender = 'squad3test@gmail.com', recipients = [recipients])
    msg.body = 'Beste klant u heeft '+dag+' een afspraak om '+tijd+' bij '+kapsalon+'. U gaat '+behandeling+' bij '+kapper+'. Met vriendelijke groet, '+kapsalon+''
    mail.send(msg)

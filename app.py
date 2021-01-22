@@ -59,9 +59,9 @@ def post_behandeling(cur):
 @app.route('/afspraak', methods=['POST'])
 def post_afspraak():
     parser = reqparse.RequestParser()
-    parser.add_argument("kapsalonid")
-    parser.add_argument("kapperid")
-    parser.add_argument("behandelingid")
+    parser.add_argument("kapsalon")
+    parser.add_argument("kapper")
+    parser.add_argument("behandeling")
     parser.add_argument("dag")
     parser.add_argument("tijd")
     parser.add_argument("klant")
@@ -71,7 +71,7 @@ def post_afspraak():
     cur.execute("""INSERT INTO Afspraken (kapsalon, kapper, behandeling, dag, tijd, klant, klantemail, klanttelefoon)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)
                 """, 
-                (args['kapsalonid'],args['kapperid'],args['behandelingid'],args['dag'],args['tijd'],args['klant'],args['klantemail'],args['klanttelefoon']))
+                (args['kapsalon'],args['kapper'],args['behandeling'],args['dag'],args['tijd'],args['klant'],args['klantemail'],args['klanttelefoon']))
     post_mail()
     conn.commit()
     return "Afspraak aangemaakt"
