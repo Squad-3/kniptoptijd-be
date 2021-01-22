@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, request
 from flask_mail import Mail, Message
 from flask_restful import Api, Resource, reqparse
 
@@ -13,21 +13,20 @@ app.config['MAIL_USE_TLS'] = False
 app.config['MAIL_USE_SSL'] = True
 mail = Mail(app)
 
-@app.route("/mail")
-def get():
-   return post()
-
-def post():
-   parser = reqparse.RequestParser()
-   parser.add_argument("email")
-   parser.add_argument("naam")
-   args = parser.parse_args() 
-   recipients = [args["email"]]
-   klant = [args["naam"]]   
-   msg = Message('Kappersafspraak', sender = 'squad3test@gmail.com', recipients = recipients)
-   msg.body = """Beste klant u heeft dag een afspraak om tijd bij kapsalon. U gaat behandeling bij kapper. Met vriendelijke groet, kapsalon"""
+def post_mail():
+   recipients = request.args.get('klantemail')
+   dag = request.args.get('dag')
+   tijd = request.args.get('tijd')
+   kapsalon = request.args.get('kapsalonid')
+   behandeling = request.args.get('behandelingid')
+   kapper = request.args.get('kapperid')
+   msg = Message('Kappersafspraak', sender = 'squad3test@gmail.com', recipients = [recipients])
+   msg.body = 'Beste klant u heeft '+dag+' een afspraak om '+tijd+' bij '+kapsalon+'. U gaat '+behandeling+' bij '+kapper+'. Met vriendelijke groet, '+kapsalon+''
    mail.send(msg)
-   return recipients, klant, "E-mail is verzonden"
+   return "sent"
+
+if __name__ == '__main__':
+   app.run(debug = True)
 
 
 # @app.route("/mail")
@@ -36,6 +35,3 @@ def post():
 #     msg = Message('Hello', sender= 'squad3test@gmail.com', recipients=recipients)
 #     msg.body = "Hello Flask message sent from Flask-Mail"
 #     mail.send(msg)
-
-if __name__ == '__main__':
-   app.run(debug = True)
